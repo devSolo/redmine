@@ -3,7 +3,12 @@
 <%= observe_field :issue_tracker_id, :url => { :action => :update_form, :project_id => @project, :id => @issue },
                                      :update => :attributes,
                                      :with => "Form.serialize('issue-form')" %>
-
+<% if User.current.admin? %>
+<p>
+<%= f.select :author_id, (User.active.sort.collect { |m| [m.name, m.id]}), :include_blank=>false %>
+<%= link_to "New User", {:controller=>"users", :action=>"add"}%>
+</p>
+<% end %>
 <p><%= f.text_field :subject, :size => 80, :required => true %></p>
                                      
 <% unless (@issue.new_record? && @issue.parent_issue_id.nil?) || !User.current.allowed_to?(:manage_subtasks, @project) %>
